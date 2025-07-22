@@ -16,17 +16,17 @@ export default function NotFoundPage() {
           'text-center',
           'bg-white',
           'rounded-lg shadow-md',
-          'p-8 max-w-md w-full'
+          'w-full max-w-md p-8'
         )}
       >
-        <h1 className={cn('text-6xl font-bold', 'text-gray-800 mb-4')}>404</h1>
+        <h1 className={cn('text-6xl font-bold', 'mb-4 text-gray-800')}>404</h1>
         <Link
           to="/"
           className={cn(
             'inline-block',
             'bg-blue-500 hover:bg-blue-600',
-            'text-white font-semibold',
-            'py-2 px-4 rounded',
+            'font-semibold text-white',
+            'rounded px-4 py-2',
             'transition-colors'
           )}
         >
