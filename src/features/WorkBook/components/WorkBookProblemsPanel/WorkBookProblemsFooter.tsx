@@ -1,4 +1,15 @@
 import React from 'react'
+import { cva } from 'class-variance-authority'
+
+const footerTextVariants = cva('tracking-[-1%]', {
+  variants: {
+    state: {
+      empty: 'font-bold text-[#FD5354]',
+      normal: 'text-[#C0C0C0]',
+      count: 'text-white'
+    }
+  }
+})
 
 type FooterData = {
   totalCount: number
@@ -22,16 +33,16 @@ export default function WorkBookProblemsFooter({
   return (
     <div className="flex h-[64px] w-full justify-end px-5 py-6">
       {isEmpty ? (
-        <span className="font-bold tracking-[-1%] text-[#FD5354]">
+        <span className={footerTextVariants({ state: 'empty' })}>
           문제 수 0 개
         </span>
       ) : (
-        <span className="tracking-[-1%] text-[#C0C0C0]">
+        <span className={footerTextVariants({ state: 'normal' })}>
           하{footerData.levelCounts.level1} · 중하
           {footerData.levelCounts.level2} · 중{footerData.levelCounts.level3} ·
           상{footerData.levelCounts.level4} · 최상
           {footerData.levelCounts.level5} |{' '}
-          <span className="tracking-[-1%] text-white">
+          <span className={footerTextVariants({ state: 'count' })}>
             문제 수 {footerData.totalCount} 개
           </span>
         </span>

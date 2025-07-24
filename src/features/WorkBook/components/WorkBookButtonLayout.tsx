@@ -18,8 +18,6 @@ const buttonVariants = cva(
 
 type ButtonState = {
   addSimilar?: boolean
-  delete?: boolean
-  swap?: boolean
 }
 
 type WorkBookButtonLayoutProps = {
@@ -37,11 +35,7 @@ export default function WorkBookButtonLayout({
   onDelete,
   onSwap
 }: WorkBookButtonLayoutProps) {
-  const {
-    addSimilar = false,
-    delete: isDeleteActive = false,
-    swap = false
-  } = activeStates
+  const { addSimilar = false } = activeStates
 
   return (
     <div className="gap-3 flex-center">
@@ -56,10 +50,10 @@ export default function WorkBookButtonLayout({
           </button>
 
           <button
-            className={buttonVariants({ active: isDeleteActive })}
+            className={buttonVariants({ active: false })}
             onClick={onDelete}
           >
-            <DeleteIcon active={isDeleteActive} />
+            <DeleteIcon active={false} />
             <span className="text-xs font-medium">삭제</span>
           </button>
         </>
@@ -68,14 +62,19 @@ export default function WorkBookButtonLayout({
       {type === 'similar' && (
         <>
           <button
-            className={buttonVariants({ active: addSimilar })}
-            onClick={onAddSimilar}
+            className={buttonVariants({ active: false })}
+            onClick={onSwap}
           >
-            <AddCircleIcon active={addSimilar} />
+            <SwapIcon />
+            <span className="text-xs font-medium">교체</span>
           </button>
 
-          <button className={buttonVariants({ active: swap })} onClick={onSwap}>
-            <SwapIcon />
+          <button
+            className={buttonVariants({ active: false })}
+            onClick={onAddSimilar}
+          >
+            <AddCircleIcon active={false} />
+            <span className="text-xs font-medium">추가</span>
           </button>
         </>
       )}
