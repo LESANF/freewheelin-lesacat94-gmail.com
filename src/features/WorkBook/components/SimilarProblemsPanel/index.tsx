@@ -1,3 +1,3 @@
 export default function SimilarProblemsPanel() {
-  return <div className="flex-center h-screen">SimilarProblemsPanel</div>
+  return <div className="h-screen flex-center">SimilarProblemsPanel</div>
 }

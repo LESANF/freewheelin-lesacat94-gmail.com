@@ -27,10 +27,5 @@
 }
 
 body {
-  font-family:
-    'SpoqaHanSansNeo',
-    -apple-system,
-    BlinkMacSystemFont,
-    system-ui,
-    sans-serif;
+  font-family: 'SpoqaHanSansNeo', sans-serif;
 }
