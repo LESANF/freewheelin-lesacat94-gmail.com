@@ -1,47 +1,36 @@
-import { useProblems } from '@/api'
 import { Problem } from '@/api/workbooks/types'
-import { useState, useEffect } from 'react'
+import { LoadingSpinner } from '../shared'
 import WorkBookProblemsFooter from './WorkBookProblemsFooter'
 import WorkBookProblemsHeader from './WorkBookProblemsHeader'
 import WorkBookProblemsList from './WorkBookProblemsList'
+import { cva } from 'class-variance-authority'
 
-export default function WorkBookProblemsPanel() {
-  const { data: problemsData, isLoading, error } = useProblems()
-  const [problems, setProblems] = useState<Problem[]>([])
-  const [activeProblemId, setActiveProblemId] = useState<number | null>(null)
+const panelContainerVariants = cva('flex h-full flex-col')
 
-  useEffect(() => {
-    if (problemsData) {
-      setProblems(problemsData)
-    }
-  }, [problemsData])
+const centerContentVariants = cva('flex-1 flex-center')
 
-  // 유사문제 버튼 클릭 핸들러
-  const handleAddSimilar = (problemId: number) => {
-    setActiveProblemId(problemId)
-    console.log('유사문제 조회:', problemId)
-  }
+const errorMessageVariants = cva('text-center text-sm text-[#FD5354]')
 
-  // 삭제 버튼 클릭 핸들러
-  const handleDelete = (problemId: number) => {
-    setProblems((prev) => {
-      const newProblems = prev.filter((problem) => problem.id !== problemId)
+type WorkBookProblemsPanelProps = {
+  problems: Problem[]
+  activeProblemId: number | null
+  isLoading: boolean
+  error: Error | null
+  onAddSimilar: (problemId: number) => void
+  onDelete: (problemId: number) => void
+}
 
-      if (activeProblemId === problemId) {
-        setActiveProblemId(null)
-
-        console.log('유사문제 리스트 비움')
-      }
-
-      return newProblems
-    })
-  }
-
+export default function WorkBookProblemsPanel({
+  problems,
+  activeProblemId,
+  isLoading,
+  error,
+  onAddSimilar,
+  onDelete
+}: WorkBookProblemsPanelProps) {
   // 버튼 활성화 상태 계산
   const getButtonStates = (problemId: number) => ({
-    addSimilar: activeProblemId === problemId,
-    delete: false,
-    swap: false
+    addSimilar: activeProblemId === problemId
   })
 
   // 난이도별 문제 개수 계산
@@ -78,10 +67,10 @@ export default function WorkBookProblemsPanel() {
 
   if (isLoading) {
     return (
-      <div className="flex h-full flex-col">
+      <div className={panelContainerVariants()}>
         <WorkBookProblemsHeader />
-        <div className="flex-1 flex-center">
-          <div className="size-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+        <div className={centerContentVariants()}>
+          <LoadingSpinner />
         </div>
         <WorkBookProblemsFooter footerData={emptyFooterData} />
       </div>
@@ -90,12 +79,10 @@ export default function WorkBookProblemsPanel() {
 
   if (error) {
     return (
-      <div className="flex h-full flex-col">
+      <div className={panelContainerVariants()}>
         <WorkBookProblemsHeader />
-        <div className="flex-1 flex-center">
-          <p className="text-center text-sm text-[#FD5354]">
-            오류가 발생했습니다.
-          </p>
+        <div className={centerContentVariants()}>
+          <p className={errorMessageVariants()}>오류가 발생했습니다.</p>
         </div>
         <WorkBookProblemsFooter footerData={emptyFooterData} />
       </div>
@@ -103,13 +90,13 @@ export default function WorkBookProblemsPanel() {
   }
 
   return (
-    <div className="flex h-full flex-col">
+    <div className={panelContainerVariants()}>
       <WorkBookProblemsHeader />
       <WorkBookProblemsList
         problems={problems}
         activeProblemId={activeProblemId}
-        onAddSimilar={handleAddSimilar}
-        onDelete={handleDelete}
+        onAddSimilar={onAddSimilar}
+        onDelete={onDelete}
         getButtonStates={getButtonStates}
       />
       <WorkBookProblemsFooter footerData={footerData} />

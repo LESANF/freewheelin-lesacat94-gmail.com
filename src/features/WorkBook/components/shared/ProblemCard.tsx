@@ -1,6 +1,7 @@
 import { Problem } from '@/api/workbooks/types'
 import { cva } from 'class-variance-authority'
 import WorkBookButtonLayout from '../WorkBookButtonLayout'
+import InfoCard from './InfoCard'
 
 const cardVariants = cva(
   'flex flex-col overflow-hidden rounded-xl border-[3px]',
@@ -17,13 +18,28 @@ const cardVariants = cva(
   }
 )
 
-// 난이도별 글자색 매핑
-const levelColors = {
-  1: '#5C5C5C', // 하
-  2: '#00ABFF', // 중하
-  3: '#54C0B1', // 중
-  4: '#FFC64D', // 상
-  5: '#FD5354' // 최상
+const headerVariants = cva(
+  'flex h-[52px] items-center justify-between px-6 py-3',
+  {
+    variants: {
+      type: {
+        detail: 'bg-[#FAFAFA]',
+        similar: 'bg-[#FAFAFA]'
+      }
+    },
+    defaultVariants: {
+      type: 'detail'
+    }
+  }
+)
+
+// 난이도별 color variant 매핑
+const levelColorMap = {
+  1: 'level1',
+  2: 'level2',
+  3: 'level3',
+  4: 'level4',
+  5: 'level5'
 } as const
 
 // 난이도별 텍스트 매핑
@@ -43,45 +59,36 @@ const typeTexts = {
 
 type ButtonStates = {
   addSimilar: boolean
-  delete: boolean
-  swap: boolean
 }
 
-function InfoCard({
-  children,
-  textColor = '#707070'
-}: {
-  children: React.ReactNode
-  textColor?: string
-}) {
-  return (
-    <div
-      className="flex h-[20px] w-[40px] rounded-[4px] bg-[#F5F5F5] text-xs font-normal flex-center"
-      style={{ color: textColor }}
-    >
-      {children}
-    </div>
-  )
-}
-
-export default function WorkBookProblemCard({
+export default function ProblemCard({
   index,
   problem,
   active = false,
+  buttonType = 'detail',
   buttonStates,
   onAddSimilar,
-  onDelete
+  onDelete,
+  onSwap
 }: {
   index: number
   problem: Problem
   active?: boolean
+  buttonType?: 'detail' | 'similar'
   buttonStates?: ButtonStates
   onAddSimilar?: () => void
   onDelete?: () => void
+  onSwap?: () => void
 }) {
+  // similar 타입일 때는 모든 버튼 회색, detail 타입일 때는 전달받은 addSimilar 사용
+  const finalButtonStates =
+    buttonType === 'similar'
+      ? { addSimilar: false }
+      : { addSimilar: buttonStates?.addSimilar || false }
+
   return (
     <div className={cardVariants({ active })}>
-      <div className="flex h-[52px] items-center justify-between bg-[#FAFAFA] px-6 py-3">
+      <div className={headerVariants({ type: buttonType })}>
         <div className="flex min-w-0 flex-1 items-center">
           <span className="text-xl font-bold text-[#333]">{index + 1}</span>
           <span className="ml-8 truncate text-sm text-[#333]">
@@ -89,23 +96,24 @@ export default function WorkBookProblemCard({
           </span>
         </div>
         <WorkBookButtonLayout
-          type="detail"
-          activeStates={buttonStates}
+          type={buttonType}
+          activeStates={finalButtonStates}
           onAddSimilar={onAddSimilar}
           onDelete={onDelete}
+          onSwap={onSwap}
         />
       </div>
 
       <div className="bg-white px-4 py-6">
         <div className="flex gap-[15px]">
           <div className="flex flex-col gap-1">
-            <InfoCard textColor={levelColors[problem.level]}>
+            <InfoCard color={levelColorMap[problem.level]}>
               {levelTexts[problem.level]}
             </InfoCard>
 
-            <InfoCard textColor="#707070">{problem.answerRate}%</InfoCard>
+            <InfoCard color="gray">{problem.answerRate}%</InfoCard>
 
-            <InfoCard textColor="#707070">{typeTexts[problem.type]}</InfoCard>
+            <InfoCard color="gray">{typeTexts[problem.type]}</InfoCard>
           </div>
 
           <div className="flex-1">
